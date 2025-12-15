@@ -279,7 +279,7 @@ class TestConcurrencyIntensive:
                 consumed.append(q.get())
             return consumed
         
-        with ThreadPoolExecutor(max_workers=1) as executor:
+        with ThreadPoolExecutor(max_workers=2) as executor:
             producer_future = executor.submit(producer)
             consumer_future = executor.submit(consumer)
             producer_future.result()
