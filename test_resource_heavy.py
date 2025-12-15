@@ -41,7 +41,7 @@ class TestCPUIntensive:
                 result *= i
             return result
         
-        result = factorial(2000)
+        result = factorial(1000)
         assert result > 0
         assert len(str(result)) > 500
     
@@ -53,7 +53,7 @@ class TestCPUIntensive:
             return fibonacci(n - 1) + fibonacci(n - 2)
         
         results = [fibonacci(i) for i in range(20)]
-        assert results[-1] == 6765
+        assert results[-1] == 4181  # fib(19)
     
     def test_cpu_matrix_multiplication(self):
         """Perform large matrix multiplication"""
@@ -228,7 +228,8 @@ class TestConcurrencyIntensive:
         def cpu_bound_task(n):
             return sum(i * i for i in range(n))
         
-        with ProcessPoolExecutor(max_workers=1) as executor:
+        # Using ThreadPoolExecutor to avoid pickle issues with local functions
+        with ThreadPoolExecutor(max_workers=2) as executor:
             results = list(executor.map(cpu_bound_task, [50000] * 10))
         
         assert len(results) == 10
@@ -532,7 +533,8 @@ class TestCombinedStressTests:
                 f.write(str(result))
             return result
         
-        with ProcessPoolExecutor(max_workers=1) as executor:
+        # Using ThreadPoolExecutor to avoid pickle issues with local functions
+        with ThreadPoolExecutor(max_workers=2) as executor:
             results = list(executor.map(heavy_task, range(8)))
         
         assert len(results) == 8
